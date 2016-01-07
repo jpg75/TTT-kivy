@@ -1,0 +1,41 @@
+#:kivy 1.0.9
+        		    	
+<LogServer>:
+	id: _log_server
+	#size: 800, 600
+	panel: _panel
+	
+	AnchorLayout:
+		anchor_x: 'left'
+		anchor_y: 'top'
+		
+		TabbedPanel:
+			id: _panel
+			server: _log_server
+			size_hint: 1, 0.7
+			do_default_tab: False
+		
+			    
+    AnchorLayout:
+    	anchor_x: 'right'
+    	anchor_y: 'bottom'        		
+			    	
+    	BoxLayout:
+    		orientation: 'horizontal'
+    		size_hint: 1, 1
+    		spacing: 10
+    		padding: 20
+    		    		
+    		Button:
+    			text: 'Parse & Save'
+    			size_hint: 1, .2
+    	    	font_size: 20
+    	    	on_press: root.save_on_press_callback()
+    	    		
+    	    #Button:
+    		#	text: 'Info'
+    		#	size_hint: 1, .2
+    	    #    font_size: 20
+    	    #    on_press: root.info_on_press_callback()
+    			
+		

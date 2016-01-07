@@ -1,0 +1,20 @@
+TTT is played with a deck of 6 cards: 2H, 3H 4H and 2C, 3C, 4c which are arranged by threes in two horizontal rows.
+All cards are used in each game. 
+The three positions in the first row are labeled respectively "Colorkeeper" (Ck), "Target" (T) and "Numberkeeper" (Nk). The card in the Target position is always face-up; the other two cards can be either face-up or face-down, depending on the difficulty level you wish to play.  If they are face-down, the Player can click on them to display their face.
+The cards in two out of the three positions in the second row are face down, while the one in the middle is face up: these positions are labeled, respectively, "DownC", "UP" and "DownN".
+
+The objective of the game consists in moving the Goal card into the Target, following the rules and restrictions of the game. The Goal card is the bigger one, displayed on the right part of the board.
+The Goal card may change during the game (dynamic version), but the traditional game adopts a static Goal card which is always 2H. 
+
+Moves consist in exchanging cards, in turn, from either Colorkeeper or Numberkeeper positions. The position (Colorkeeper or Numberkeeper) from which the current player moves is marked by a green edge bordering the card.
+To make an exchange, drag one card from its initial position and drop it into the desired position. 
+If you wish not to make an exchange from the current position, but rather perform a change of turn and move from "Numberkeeper" to "Colorkeeper" or viceversa, click on the Pass button. 
+
+Direct exchange between two cards from Colorkeeper to Numberkeeper position is not allowed. All the other exchanges are allowed, except the restrictions explained hereinafter. 
+
+Restrictions: 
+
+Exchanging the card in the Colorkeeper position with the card in the Target position is only allowed when the two cards are of the same color 
+
+Exchange of the card in the Numberkeeper position with the card in the Target position is only allowed when the two cards are of the same number 
+

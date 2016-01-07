@@ -1,0 +1,2 @@
+pippo data/game422-small.txt
+pluto data/game422.txt

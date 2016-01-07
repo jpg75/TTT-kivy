@@ -1,0 +1,31 @@
+TTT is played with a deck of 6 cards of two distinct seeds: Hearts (H) and Clubs (C).
+The display is divided in two zones: deck zone (the left, biggest part) and control zone (right part).
+All cards are used in each game and their actual arrangement on the deck varies at every run (or hand).
+Two players are involved: 'ColorKeeper' and 'NumberKeeper'. Each player has one card and the other four are placed in four positions on the board named: 'Target Position', 'Up Position', 'DownC Position' and 'DownN Position'.
+The player cards are respectively located in 'Color Position' and 'Number Position'.
+
+The cards on the board are arranged by triples in two horizontal rows.
+The three positions in the first row are 'Color Position', 'Target Position' and 'Number Position'.
+The cards in the second row are 'DownC Position', 'UP Position' and 'DownN Position'.
+The card in the Target and Up positions are always face-up, while the cards in DownC and DownN positions are face down.
+When the game runs, each player can see its own card and the cards in Target and Up positions.
+
+When a card is face down, the player can right-click over it to display its face.
+However, this feature can be disabled according to the difficulty level with which the game has been configured.
+For example, it might be possible to turn cards in DownC or DownN positions, but not the other player card (e.g., Color or Number position) or no cards can be turned at all.
+
+The objective of the game consists in moving the Goal card into the Target position.
+The Goal card is shown on the top right part of the display.
+The Goal card may change during the game (dynamic version), but the traditional game adopts a static Goal card which is always 2H.
+
+In order to accomplish the goal, each player alternately exchange their cards for one of the cards placed on the board.
+There are no restrictions on exchange with cards located in Up, DownC and DownN positions.
+Exchanging with the card in Target position is constrained by rules which are different for each player.
+The 'ColorKeeper' player may exchange his card with the card in Target position only if the two cards have the same color.
+The 'NumberKeeper' player instead may exchange his card with the card in Target position only if the two cards have the same number.
+In addition, an alternative move is available, called 'Pass', which is triggered by the 'Pass' button on the right part of the display.
+By pressing the button the player skips its move and the turn is passed to its partner.
+
+The players move alternatively and exchange their card with one of the cards on the board until one of them is able to put 2H in the Target area.
+
+Each move ('Pass' inclusive) has a fixed cost. Therefore each player must use the fewest possible number of moves to accomplish the goal in each hand.

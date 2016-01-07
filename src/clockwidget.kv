@@ -1,0 +1,59 @@
+#:kivy 1.0
+ 
+<ClockWidget>:
+	scale_max: 100
+	size_hint: None, None
+	size: (512, 512)
+	pos: (50, 50)
+ 
+	FloatLayout:
+		canvas:
+		Color:
+    		rgb: 1, 1, 1
+   		
+		Ellipse:
+			size: 150, 150
+			pos: 430, 240
+ 
+		Color:
+			rgb: 0, 0, 1
+   	
+	Ellipse:
+		size: 150, 150
+		angle_start: 0
+		angle_end: root.uxSeconds * 6
+		pos: 430, 240
+
+	Color:
+		rgb: 0, 0, 0
+ 
+	Ellipse:
+		size: 130, 130
+		pos: 440, 250
+ 
+	Label:
+		text: root.uxSecondsStr
+		font_size: 70
+		pos: 455, 260
+ 
+	FloatLayout:
+		size: root.width, root.height
+ 
+	Label:
+    	id: time_label
+		text: root.uxTime
+		font_size: 100
+		pos: 0, 50
+ 
+	Label:
+		id: date_label
+		text: root.uxDate
+		font_size: 30
+		pos: 40, -20
+ 
+	Label:
+		id: day_label
+		text: root.uxDay
+		font_size: 30
+		pos: 160, -60
+      

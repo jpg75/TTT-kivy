@@ -1,0 +1,3 @@
+# Log server configuration file
+shoe_file=server-game.txt
+users_shoe_file=users.txt

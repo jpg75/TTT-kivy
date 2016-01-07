@@ -1,0 +1,91 @@
+#:kivy 1.0.9
+
+<TTTGame>:
+	id: _ttt_game
+	bottom_bar: _bottom_bar
+	side_bar: _side_bar
+	game_table: _game_table
+	console: _console
+	timer: _timer
+	
+	AnchorLayout:
+		anchor_x: 'left'
+		anchor_y: 'top'
+		GameTable:
+			id: _game_table
+			ttt: _ttt_game
+			size_hint: 0.7, 0.7
+    
+    SideBar:
+    	id: _side_bar
+    	ttt: _ttt_game
+    	anchor_x: 'right'
+    	anchor_y: 'center'        		
+			    	
+    	BoxLayout:
+    		orientation: 'vertical'
+    		size_hint: 0.3, 1
+    		spacing: 10
+    		padding: 20
+    		
+    		BoxLayout:
+    			orientation: 'vertical'
+   			
+	    		Label:
+    				text: 'Goal card'
+    				size_hint: 1, 0.1
+    				font_size: 20
+    		
+    			Image:
+    				source: root.game_card_file
+    				#allow_stretch: True
+					#keep_ratio: False
+    				#size_hint: None, None
+    				#size: dp(100*1.5), dp(140*1.5)
+    		
+    		BoxLayout:
+    			size_hint: 1, 0.5
+    			orientation: 'vertical'
+    			
+    			Label:
+					font_size: 20
+					text: 'Current player is: '+ root.current_player
+	
+				Label:
+					font_size: 20
+					text: 'Current run: ' + str(root.run) +'/'+ str(root.total_runs)
+	
+				Label:
+					font_size: 20
+					text: 'Number of moves: ' + str(root.moves) + '. Total moves so far: ' + str(root.total_moves)
+	
+				Label:
+					id: _timer
+					font_size: 24
+					text: 'Time: 00:00:00'
+					
+    		TextInput:
+    			id: _console
+    			text: ''
+    			readonly: True
+    			font_size: 20
+			
+			#Button:
+			#	text: 'Connect'
+			#	size_hint: 1, .3
+			#	font_size: 20
+			#	on_press: root.connect_on_press_callback()
+			
+			Button:
+				text: 'Help'
+				size_hint: 1, .3
+				font_size: 20
+				on_press: root.help_on_press_callback()
+    	        
+	AnchorLayout:
+		anchor_x: 'left'
+		anchor_y: 'bottom'
+		BottomBar:
+			id: _bottom_bar
+			ttt: _ttt_game
+			size_hint: 0.7, 0.3

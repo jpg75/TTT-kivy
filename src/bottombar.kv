@@ -1,0 +1,15 @@
+#:kivy 1.0.9
+
+<BottomBar>:
+	orientation: 'vertical'
+	anchor_x: 'center'
+	anchor_y: 'top'
+	# spacing: 10
+	padding: 5
+
+	Button:
+		text: 'PASS'
+		size_hint: 0.7, 0.4
+		font_size: 20
+		on_press: root.ttt.pass_on_press_callback()
+    	    	

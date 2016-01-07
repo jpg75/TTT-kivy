@@ -1,0 +1,77 @@
+#:kivy 1.0.9
+
+<ConnectionPopup>:
+	title: 'Connection Window'
+	size_hint: 0.4, 0.4
+	label: _label
+	
+	BoxLayout:
+		orientation: 'vertical'
+		# size_hint: 0.4, 0.4
+		# spacing: 10
+		padding: 5
+			
+		Label:
+			id: _label
+    		text: 'Looking for server, please wait...'
+    		font_size: '25sp'
+	
+		Button:
+			text: 'Skip'
+			# size_hint: 0.7, 0.4
+			font_size: '25sp'
+			on_press: root.skip_connection()
+    	    	
+<LoginPopup>:
+	t_input: _t_input
+	title: 'Login Window'
+	size_hint: 0.5, 0.5
+	#label: _label
+	
+	BoxLayout:
+		orientation: 'vertical'
+		# size_hint: 0.4, 0.4
+		# spacing: 10
+		padding: 5
+			
+		Label:
+			id: _label
+    		text: 'Please, insert your user-name:'
+    		font_size: '30sp'
+		
+		TextInput:
+			id: _t_input
+			# text: 'User%0.6d' % rnd.randint(0, 999999)
+			text: root.get_rand_user() 
+			multiline: False
+			on_text_validate: root.validate_callback()
+			focus: True
+			font_size: '25sp'
+			size_hint: 1, 0.3
+		
+		Button:
+			text: 'Ok'
+			# size_hint: 0.7, 0.4
+			font_size: '20sp'
+			size_hint: 1, 0.3
+			on_press: root.quit()
+
+#<BetweenHandsPopup>:
+#	title: 'Next Hand Window'
+#	size_hint: 0.3, 0.3
+#	goal_changed: False
+	#label: _label
+	# on_goal_changed: root.add_widget(self.cond_label) if (self.goal_changed==True) else root.remove_widget(self.cond_label) 
+#	
+#	BoxLayout:
+#		orientation: 'vertical'
+#		padding: 5
+#			
+#		cond_label: Label( text='Your Goal card has changed'
+#   		font_size='30sp')
+#	
+#		Button:
+#			text: 'Next hand'
+#			font_size: '40sp'
+#			on_press: root.dismiss()
+        

@@ -1,0 +1,156 @@
+#:kivy 1.0.9
+
+<CardWidget>:
+    size_hint: None, None	    
+    do_rotation: False
+    do_scale: False
+    do_translation: True
+    auto_bring_to_front: True
+    size: _image.size
+    
+    Image:
+    	id: _image
+    	source: root.source
+    	allow_stretch: True
+    	keep_ratio: False
+    	size_hint: None, None
+    	size: dp(100*1.2), dp(140*1.2)
+		#size: 200, 150/self.image_ratio
+
+<GameTable>:
+	size_hint: (None, None)
+	size_hint_x: None
+	size_hint_y: None
+	
+	canvas:
+		Color:
+			rgba: 0,0.392,0.0,1
+		Rectangle:
+			size: self.size
+
+    CardWidget:	
+    	auto_bring_to_front: True
+    	center_x: (root.width/4) *1
+		center_y: (root.height/3)*2
+		source: 'data/h2red.jpeg'
+		front_pic_file: 'data/h2red.jpeg'
+		# back_pic_file: 'data/card_back_blue.jpeg'
+		start_flipped: True
+		# to_front: False
+		zone: 'Color Position'
+		color: 'red'
+
+	Label:
+		size_hint: None, None
+		center_x: (root.width/4)*1
+		center_y: (root.height/3)*2.5
+		text: 'Color Position'
+		disabled: True
+		font_size: '20sp'
+		disabled_color: 1,1,1,1
+	
+	CardWidget:
+		auto_bring_to_front: True
+		center_x: (root.width/4) * 2
+    	center_y: (root.height/3) * 2
+    	source: 'data/h3red.jpeg'
+    	front_pic_file: 'data/h3red.jpeg'
+    	# back_pic_file: 'data/card_back_blue.jpeg'
+    	start_flipped: True
+    	# to_front: False
+    	zone: 'Target Position'
+		color: 'red'
+		    
+    Label:
+    	size_hint: None, None
+		center_x: (root.width/4)*2
+		center_y: (root.height/3)*2.5
+		text: 'Target Position'
+		disabled: True
+		font_size: '20sp'
+		disabled_color: 1,1,1,1
+		
+    CardWidget:
+    	auto_bring_to_front: True
+        center_x: (root.width/4) *3
+        center_y: (root.height/3)*2
+		source: 'data/h4red.jpeg'
+		front_pic_file: 'data/4red.jpeg'
+		# back_pic_file: 'data/card_back_blue.jpeg'
+		start_flipped: True
+		# to_front: False
+		zone: 'Number Position'
+    	color: 'red'
+    	
+    Label:
+    	size_hint: None, None
+		center_x: (root.width/4)*3
+		center_y: (root.height/3)*2.5
+		text: 'Number Position'
+		disabled: True
+		font_size: '20sp'
+		disabled_color: 1,1,1,1
+		    	
+    CardWidget:
+    	auto_bring_to_front: True
+        center_x: (root.width/4) *1
+        center_y: (root.height/3)*1
+		source: 'data/c2black.jpeg'
+		front_pic_file: 'data/c2black.jpeg'
+		# back_pic_file: 'data/card_back_blue.jpeg'
+		start_flipped: True
+		# to_front: False
+		zone: 'DownC Position'
+    	color: 'black'
+    
+    Label:
+    	size_hint: None, None
+		center_x: (root.width/4)*1
+		center_y: (root.height/3)*1.5
+    	text: 'DownC Position'
+    	disabled: True
+    	font_size: '20sp'
+    	disabled_color: 1,1,1,1
+	       	     
+    CardWidget:
+    	auto_bring_to_front: True
+        center_x: (root.width/4) *2
+        center_y: (root.height/3)*1
+		source: 'data/c3black.jpeg'
+		front_pic_file: 'data/c3black.jpeg'
+		# back_pic_file: 'data/card_back_blue.jpeg'
+		start_flipped: True
+		# to_front: False
+		zone: 'Up Position'
+    	color: 'black'
+    
+    Label:
+    	size_hint: None, None
+		center_x: (root.width/4)*2
+		center_y: (root.height/3)*1.5
+    	text: 'UP Position'
+    	disabled: True
+    	font_size: '20sp'
+    	disabled_color: 1,1,1,1
+            
+    CardWidget:
+    	auto_bring_to_front: True
+		center_x: (root.width/4) *3
+		center_y: (root.height/3)*1
+		source: 'data/c4black.jpeg'
+		front_pic_file: 'data/c4black.jpeg'
+		# back_pic_file: 'data/card_back_blue.jpeg'
+		start_flipped: True
+		# to_front: False
+		zone: 'DownN Position'
+    	color: 'black'
+    
+    Label:
+		size_hint: None, None
+		center_x: (root.width/4)*3
+		center_y: (root.height/3)*1.5
+		text: 'DownN Position'
+		disabled: True
+		font_size: '20sp'
+		disabled_color: 1,1,1,1
+		

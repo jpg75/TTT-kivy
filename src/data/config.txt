@@ -1,0 +1,21 @@
+# enable / disable the chance to flip any card
+cards_unturnable=0
+# enable/disable the chance to flip each single card on the deck 
+# (the order is given by the 'format' parameter)
+turnable=1,0,0,0,1,0
+#turnable=1,1,1,1,1,1
+
+ask_shoe=1
+shoe_file=game422-small.txt
+format=circular
+help_file=help_eng.txt
+
+# time for the count-down clock in seconds
+timer_start=2400
+
+# static server parameters
+server=localhost
+server_port=8080
+# CEEL server lab:
+#server=192.168.186.66
+
