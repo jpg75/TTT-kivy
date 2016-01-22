@@ -5,6 +5,9 @@ cards_unturnable=0
 turnable=1,0,0,0,1,0
 #turnable=1,1,1,1,1,1
 
+# enables the automatic player agent, by default is playing as NumberKeeper (NK)
+auto_player=1
+
 ask_shoe=1
 shoe_file=game422-small.txt
 format=circular

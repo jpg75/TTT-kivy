@@ -6,6 +6,7 @@ Created on 27/ott/2014
 
 import sys, time
 import random
+import itertools
 from collections import deque
 from os.path import dirname, abspath
 from util.stopwatch import StopWatch
@@ -114,9 +115,11 @@ class TTTGame(AnchorLayout):
         self.turnables = config.getParam('turnable')
         self.cards_unturnable = bool(int(config.getParam('cards_unturnable')))
         
+        # enables the automatic player agent, playing as NK as default. 
+        self.auto_player = bool(int(config.getParam('auto_player')))
+        
         self.format = config.getParam('format')
         self.help_file = config.getParam('help_file')
-        # self.ask = bool(int(config.getParam('ask_shoe')))
         self.shoe_file = config.getParam('shoe_file')
         
         self.srv = config.getParam('server')
@@ -587,7 +590,7 @@ class LoginPopup(Popup):
         # generate the new hand (1st):
         ap.App.get_running_app().g.generate_hand()
         
-        # starts the countdown clock:
+        # starts the count down clock:
         Clock.schedule_once(lambda dt: ap.App.get_running_app().g.
                             count_down(ap.App.get_running_app().g.timer_start))
     
@@ -631,7 +634,6 @@ class CardWidget(Scatter):
         self.back_pic_file = 'data/card_back_blue.jpeg'
         self.name = kargs.get('card_name', '')
         self.old_x, self.old_y = self.pos
-        # self.old_x, self.old_y = None, None
         self.busy_anim = False
         self.color = None
         self.num = None
@@ -665,7 +667,6 @@ class CardWidget(Scatter):
         self.front_pic_file = value
         self.source = self.front_pic_file
         self.to_front = True
-        # pass
         
     def on_zone(self, instance, value):
         """Zone property change event. used to hide or show the card according 
@@ -680,7 +681,6 @@ class CardWidget(Scatter):
             self.source = self.front_pic_file
         else:  # false!
             self.source = self.back_pic_file
-        
         
     def show_border(self, off=False):
         """Draw a green rectangle around the card.
@@ -702,9 +702,7 @@ class CardWidget(Scatter):
         """Commodity method, select the clicked card.
         """
         if not self.selected:
-            # if self.old_x == None:
             self.old_x = self.x
-            # if self.old_y == None:
             self.old_y = self.y
             self.selected = True
             
@@ -712,8 +710,6 @@ class CardWidget(Scatter):
         """Check for a DOUBLE tap. If detected, the card flips.
         Handles the rules for which a card can or cannot flip.
         """
-        # if touch.is_triple_tap and not self.parent.parent.parent.cards_unturnable \
-        #    and self.parent.parent.parent.turnable[self.zone]:
         if touch.is_double_tap and not self.parent.parent.parent.cards_unturnable \
             and self.parent.parent.parent.turnable[self.zone]:
             if self.front:
@@ -763,6 +759,10 @@ class CardWidget(Scatter):
             
             # tries to wait until the card is back on position
             if self.busy_anim:
+                return super(CardWidget, self).on_touch_down(touch)
+    
+            # manage only number keeper as auto player!
+            if self.parent.parent.parent.auto_player and self.parent.parent.parent.current_player == 'nk':
                 return super(CardWidget, self).on_touch_down(touch)
              
             if ((self.zone == 'Color Position' and self.parent.parent.parent.current_player == 'ck')  \
@@ -847,17 +847,16 @@ class CardWidget(Scatter):
     
     def on_start_animation(self, instance, value):
         self.busy_anim = True
-        # print "start animation ", instance
         
     def on_complete_animation(self, instance, value):
         self.busy_anim = False
-        # print "end animation ", instance
 
 
 class RuleParser(object):
     def __init__(self, file_name='data/arules.txt'):
         self.filename = file_name
         self.rules = []
+        self.rates = dict()  # maps score -> [rule1, rule2,...]
     
     def load_rules(self):
         with open(self.filename) as f:
@@ -872,10 +871,79 @@ class RuleParser(object):
         # check the basics for rule correctness: length
         counter = 1
         for rule in self.rules:
-            if len(rule) not in [4, 7, 14, 18]:
-                print "Error: rule %d is not well formed, please check." % counter
+            if len(rule) not in [4, 7, 11, 14, 18]:
+                print "Warning: rule -%s- has non standard size: %d" % (str(rule), len(rule))
                        
             counter += 1   
         
+        print "Rules loaded: ", len(self.rules)
+    
+    def match(self, hand, up, target, ck_knowledge, nk_knowledge, auto_player='nk',):
+        """Calculate the rule match and return the rule to apply.
+        The rule to apply is selected according to the rate scored.
+        If multiple rules scored the same, then a rule is selected at random 
+        """
+        if not ck_knowledge:
+            ckk = []
+        else: 
+            ckk = [ [i.get(k) for k in TTTGame.history_record.iterkeys() if k != 'hand'] for i in ck_knowledge]
         
-               
+        if not nk_knowledge:
+            nkk = []
+        else:
+            nkk = [ [i.get(k) for k in TTTGame.history_record.iterkeys() ] for i in nk_knowledge]
+        
+        nksize = len(nkk) * 4
+        cksize = len(ckk) * 3
+        print "ckk: %s" % ckk
+        print "nkk: %s" % nkk
+        rl = [x for x in self.rules if len(x) - 1 <= cksize + nksize + 4]
+        print "Size nk: %d , ck: %s" % (nksize, cksize)
+        print "Avail rules:\n %s" % rl
+        
+        # makes a single list where alternatively puts ck_knowlodge and 
+        # nk_knowledge elements 'hand' elements are removed from ck_knowledge
+        iters = [iter(ckk), iter(nkk)]
+        knowledge = [hand, up, target] + list(it.next() for it in itertools.cycle(iters))
+        print "Knowledge: %s" % knowledge
+            
+        for rule in rl:
+            score = 0    
+            comparison = zip(rule[1:], knowledge)
+            # print "COMPARING: %s"%comparison
+            for r, k in comparison:
+                if r == k:
+                    score += 1
+                elif r == '#':
+                    pass
+                else:
+                    break  # goes to the next rule                    
+                
+                if self.rates.get(score):
+                    self.rates[score].append(rule)
+                else:
+                    self.rates[score] = []
+                    self.rates[score].append(rule)
+            
+        highest_score = max(self.rates.keys())
+        result = self.rates[highest_score]
+        print "Highest score: %d" % highest_score
+        print "Result set is: %s" % result
+        if len(result) == 1:
+            return result[0]
+        else: 
+            return random.choice(result)
+                    
+    def show_rule_rates(self, how_many=5):
+        txt = ''
+        s = sorted(self.rates.iterkeys())
+        for k in s[min(how_many, len(s))]:
+            txt += self.rates[k] + '\n'
+        
+        return txt
+
+#===============================================================================
+# Debugging from console with:    
+# 
+# rp.match('3C','2C','4C',[{'hand':'2C','move':'U','up':'2H','target':'4C'}],[])
+#===============================================================================

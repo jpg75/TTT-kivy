@@ -56,7 +56,8 @@ C		#	#	4C
 N		#	#	4C	#	#	#	C	#	#	4C							
 C		#	#	4C	#	#	#	N	#	#	4C							
 //M	 	H	U	T	M1	U1	T1	M-1	H-1	U-1	T-1	M1-1	U1-1	T1-1	M-2	H-2	U-2	T-2
-// Se Ck sta cercando, e tu devi Cercare, cerca antisimmetricamente																		
+// Se Ck sta cercando, e tu devi Cercare, cerca antisimmetricamente	
+// ATTENZIONE: queste regole hanno dimensione irregolare: 5 e 12 															
 N		#	#	4C	C													
 C		#	#	4C	N													
 N		#	#	4C	#	#	#	C	#	#	4C	N						
