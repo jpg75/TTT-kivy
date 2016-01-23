@@ -390,7 +390,49 @@ class TTTGame(AnchorLayout):
                     w.to_front = False
                 else:
                     w.to_front = True
-    
+
+    def is_goal(self, card, other_card):
+        """ Check whether the move accomplish the hand goal or not"""
+        if other_card.zone == 'Target Position' :
+            if card.zone == 'Color Position' and card.color == other_card.color:
+                print "card zone: %s , color: %s, other color: %s" % (card.zone, card.color, other_card.color)
+                return True
+            if card.zone == 'Number Position' and card.number == other_card.number:
+                print "card zone: %s , color: %s, other color: %s" % (card.zone, card.number, other_card.number)
+                return True
+
+        return False
+
+    def check_cards_collision(self, touch, card, other_card):
+        """Check if the move is correct and if the hand is complete.
+
+        :param touch: a touch object
+        :param card: moved card
+        :param other_card: card over which has been moved the other
+        :return: wether or not the other_card must be relocated
+        """
+        relocated = False
+        if other_card.collide_point(touch.x, touch.y) and other_card.zone in TTTGame.allowed_moving_zones:  # collision!
+            if other_card.zone == 'Target Position' :
+                if self.is_goal(card, other_card):
+                    # check if its is the current target
+                    print "NAME: %s - target: %s" % (card.name, self.current_target_card)
+                    if card.name == self.current_target_card:
+                        # ended current run!
+                        self.run += 1
+                        self.console.text += 'Hand successful!\n'
+                        Clock.schedule_once(lambda dt: self.generate_hand())
+
+                    card.relocate(other_card)
+                    relocated = True
+                    self.score(card, other_card)
+
+            else:
+                card.relocate(other_card)
+                relocated = True
+                self.score(card, other_card)
+
+        return relocated
 
     def generate_hand(self):
         """Generate a new handle from the description found in the shoe file.
@@ -791,25 +833,26 @@ class CardWidget(Scatter):
             # check if it is over any other card:
             for w in self.parent.children:
                 if w != self and isinstance(w, CardWidget):
-                    if w.collide_point(touch.x, touch.y) and w.zone in TTTGame.allowed_moving_zones:  # collision!
-                        if w.zone == 'Target Position' :
-                            if self.is_goal(w):
-                                # check if its is the current target
-                                print "NAME: %s - target: %s" % (self.name, self.parent.parent.parent.current_target_card)
-                                if self.name == self.parent.ttt.current_target_card:
-                                    # ended current run!
-                                    self.parent.ttt.run += 1
-                                    self.parent.ttt.console.text += 'Hand successful!\n'
-                                    Clock.schedule_once(lambda dt: self.parent.parent.parent.generate_hand())
-                                    
-                                self.relocate(w)
-                                relocated = True
-                                self.parent.ttt.score(self, w)
-                                                                 
-                        else:
-                            self.relocate(w)
-                            relocated = True
-                            self.parent.ttt.score(self, w)
+                    relocated = self.parent.parent.parent.check_cards_collision(touch, self, w)
+                    # if w.collide_point(touch.x, touch.y) and w.zone in TTTGame.allowed_moving_zones:  # collision!
+                    #     if w.zone == 'Target Position' :
+                    #         if self.is_goal(w):
+                    #             # check if its is the current target
+                    #             print "NAME: %s - target: %s" % (self.name, self.parent.parent.parent.current_target_card)
+                    #             if self.name == self.parent.ttt.current_target_card:
+                    #                 # ended current run!
+                    #                 self.parent.ttt.run += 1
+                    #                 self.parent.ttt.console.text += 'Hand successful!\n'
+                    #                 Clock.schedule_once(lambda dt: self.parent.parent.parent.generate_hand())
+                    #
+                    #             self.relocate(w)
+                    #             relocated = True
+                    #             self.parent.ttt.score(self, w)
+                    #
+                    #     else:
+                    #         self.relocate(w)
+                    #         relocated = True
+                    #         self.parent.ttt.score(self, w)
                         
             # if it is not a valid move, bring the card to the original position 
             if (not relocated and (self.x != self.old_x or self.y != self.old_y)):
