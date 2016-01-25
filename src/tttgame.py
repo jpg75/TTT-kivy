@@ -561,6 +561,9 @@ class TTTGame(AnchorLayout):
 
             self.quit_popup()
 
+    def auto_player_behavior(self):
+        pass
+
     def show_login_popup(self):
         l_popup = LoginPopup()
         l_popup.open()
@@ -690,7 +693,6 @@ class CardWidget(Scatter):
     start_flipped = BooleanProperty(False)  # USELESS! TODO: REMOVE IT!
     to_front = BooleanProperty(False)
     front_pic_file = StringProperty()
-    # back_pic_file = StringProperty()
     zone = StringProperty()
 
     def __init__(self, **kargs):
