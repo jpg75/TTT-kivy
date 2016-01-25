@@ -1,8 +1,6 @@
 import itertools
 import random
 
-from tttgame import TTTGame
-
 
 class RuleParser(object):
     """
@@ -35,7 +33,7 @@ class RuleParser(object):
 
         print "Rules loaded: ", len(self.rules)
 
-    def match(self, hand, up, target, ck_knowledge, nk_knowledge, auto_player='nk'):
+    def match(self, hand, up, target, ck_knowledge, nk_knowledge, history_record, auto_player='nk'):
         """Calculate the rule match and return the rule to apply.
         The rule to apply is selected according to the rate scored.
         If multiple rules scored the same, then a rule is selected at random
@@ -43,12 +41,12 @@ class RuleParser(object):
         if not ck_knowledge:
             ckk = []
         else:
-            ckk = [[i.get(k) for k in TTTGame.history_record.iterkeys() if k != 'hand'] for i in ck_knowledge]
+            ckk = [[i.get(k) for k in history_record.iterkeys() if k != 'hand'] for i in ck_knowledge]
 
         if not nk_knowledge:
             nkk = []
         else:
-            nkk = [[i.get(k) for k in TTTGame.history_record.iterkeys()] for i in nk_knowledge]
+            nkk = [[i.get(k) for k in history_record.iterkeys()] for i in nk_knowledge]
 
         nksize = len(nkk) * 4
         cksize = len(ckk) * 3

@@ -23,7 +23,7 @@ from kivy.uix.textinput import TextInput
 from os.path import dirname, abspath
 
 from kivy.properties import NumericProperty, ObjectProperty, StringProperty, BooleanProperty, ListProperty
-from src.parser import RuleParser
+from parser import RuleParser
 
 from config import Configuration
 from util.stopwatch import StopWatch
