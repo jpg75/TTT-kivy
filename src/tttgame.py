@@ -81,9 +81,9 @@ class TTTGame(AnchorLayout):
                             "DownN Position"]
 
     """map zones -> moves"""
-    ZONES_MOVES = {"Up Position": "u", "DownC Position": "c",
-                   "DownN Position": "n", "Target Position": "t", "Pass": "p"}
-
+    ZONES_MOVES = {"Up Position": "U", "DownC Position": "C",
+                   "DownN Position": "N", "Target Position": "T", "Pass": "P"}
+    
     """map card name -> card picture file"""
     cards_names_files = {"2H": "h2red.jpeg", "3H": "h3red.jpeg", "4H": "h4red.jpeg",
                          "2C": "c2black.jpeg", "3C": "c3black.jpeg", "4C": "c4black.jpeg"}
@@ -118,7 +118,7 @@ class TTTGame(AnchorLayout):
         self.cards_unturnable = bool(int(config.getParam('cards_unturnable')))
 
         # enables the automatic player agent, playing as NK as default. 
-        self.rp = None # Rule Parser
+        self.rp = None  # Rule Parser
         self.auto_player = bool(int(config.getParam('auto_player')))
         if self.auto_player:
             self.rp = RuleParser()
@@ -274,10 +274,13 @@ class TTTGame(AnchorLayout):
                     w.to_front = True
 
     def score(self, current_card=None, opponent_card=None, move='Pass'):
-        """Score a valid move for the current player and updates the current player.
-        The move is added to the history of moves.
-        Cards in NumberKeeper and Colorkeeper positions are flip according to the
+        """Score a valid move for the current player and updates stats and the 
+        current player turn.
+        Moves are added to the hand's history of moves and to the short term 
+        memory history as well.
+        Cards in NumberKeeper and ColorKeeper positions are flip according to the
         current player.
+        If the auto player is enabled, its behavior is triggered with a delay.
         """
         self.moves += 1
         self.total_moves += 1
@@ -349,10 +352,14 @@ class TTTGame(AnchorLayout):
         if self.current_player == 'ck':
             self.ck_history_q.appendleft(h_record)
             self.current_player = 'nk'
+            # when auto player enabled trigger its behavior in [1:3] seconds delay
+            if self.auto_player:
+                Clock.schedule_once(lambda dt: self.auto_player_behavior(), random.randint(1, 3))
+                
         else:
             self.nk_history_q.appendleft(h_record)
             self.current_player = 'ck'
-
+    
         self.adjust_keeper_cards()  # flip the opponent card
         self.adjust_cards_border()  # highlight the player card
 
@@ -562,8 +569,57 @@ class TTTGame(AnchorLayout):
             self.quit_popup()
 
     def auto_player_behavior(self):
-        pass
-
+        current_table = dict(TTTGame.history_record.items())
+        
+        for w in self.game_table.children:
+            if isinstance(w, CardWidget):
+                if w.zone == 'Target Position':
+                    current_table['target'] = w.name
+                elif w.zone == 'Up Position':
+                    current_table['up'] = w.name
+                elif w.zone == 'Color Position' and self.current_player == 'ck':
+                    current_table['hand'] = w.name
+                elif w.zone == 'Number Position' and self.current_player == 'nk':
+                    current_table['hand'] = w.name
+                else:
+                    print "Unmatched card zone string!"
+                    
+        rule = self.rp.match(current_table['hand'], current_table['up'],
+                              current_table['target'], self.ck_history_q,
+                              self.nk_history_q, self.history_record)
+        
+        self.apply_move(rule[0], current_table['hand'])
+        
+    
+    def apply_move(self, move, hand):
+        """Used by the auto player: actually performs the move dictated by the 
+        rules.
+        """
+        if move == 'p':
+            self.score(None, None)
+            
+        else:
+            card = None
+            to_card = None
+            for w in self.game_table.children:
+                if isinstance(w, CardWidget):
+                    if w.name == 'hand':
+                        card = w
+                    if (w.zone != 'Color Position' and w.zone != 'Number Position') \
+                        and TTTGame.ZONES_MOVES[w.zone] == move:
+                        to_card = w
+            
+            if to_card.zone == 'Target Position':
+                if self.is_goal(card, to_card):
+                    if card.name == self.current_target_card:
+                        self.run += 1
+                        self.console.text += 'Hand successful!\n'
+                        Clock.schedule_once(lambda dt: self.generate_hand())
+                  
+            self.relocate(card, to_card)
+            self.score(card, to_card)
+            
+        
     def show_login_popup(self):
         l_popup = LoginPopup()
         l_popup.open()
@@ -643,9 +699,9 @@ class LoginPopup(Popup):
         self.dismiss()
 
         # file names are in the form: output-<dmY>-<HM>.txt
-        ap.App.get_running_app().g.fout_handle = open('output-' + name + '-' +
+        ap.App.get_running_app().g.fout_handle = open('output-' + name + '-' + 
                                                       time.strftime('%d%m%Y-%H%M') + '.txt', 'w')
-        ap.App.get_running_app().g.fout_time_handle = open('output-time-' + name + '-' +
+        ap.App.get_running_app().g.fout_time_handle = open('output-time-' + name + '-' + 
                                                            time.strftime('%d%m%Y-%H%M') + '.txt', 'w')
         # login on the server
         ap.App.get_running_app().send_message('login ' + name)
@@ -857,7 +913,7 @@ class CardWidget(Scatter):
             for w in self.parent.children:
                 if w != self and isinstance(w, CardWidget):
                     if self.parent.parent.parent.check_cards_collision(touch, self, w):
-                        relocated=True
+                        relocated = True
                     # if w.collide_point(touch.x, touch.y) and w.zone in TTTGame.allowed_moving_zones:  # collision!
                     #     if w.zone == 'Target Position':
                     #         if self.is_goal(w):
@@ -878,7 +934,7 @@ class CardWidget(Scatter):
                     #         self.relocate(w)
                     #         relocated = True
                     #         self.parent.ttt.score(self, w)
-            self.parent.ttt.console.text += "Relocated: %s!\n"%relocated
+            self.parent.ttt.console.text += "Relocated: %s!\n" % relocated
             # if it is not a valid move, bring the card to the original position 
             if (not relocated and (self.x != self.old_x or self.y != self.old_y)):
                 anim = Animation(x=self.old_x, y=self.old_y, t='in_quad', d=0.5)
