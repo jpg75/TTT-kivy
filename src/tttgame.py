@@ -166,6 +166,14 @@ class TTTGame(AnchorLayout):
         self.total_runs = len(self.shoe_config.content)
         self.connection_popup = ConnectionPopup()
         self.connection_popup.open()
+        
+        #=======================================================================
+        # for w in self.game_table.children:
+        #     if isinstance(w, CardWidget):
+        #         w.old_x = w.x
+        #         w.old_y = w.y
+        #=======================================================================
+                # Clock.schedule_once(lambda dt: w.select(), 0)
         # self.connection_popup()  
         # self.show_login_popup()
         # self.generate_hand()
@@ -287,24 +295,30 @@ class TTTGame(AnchorLayout):
         move_time = self.stopwatch.split()
         move_str = ''
         h_record = dict(TTTGame.history_record)  # make a new one
-
+                
         # Search who is in the target and up positions 
         for w in self.game_table.children:
             if isinstance(w, CardWidget):
                 if w.zone == 'Target Position':
                     cur_target = w.name
+                    # print "cur target: ",cur_target
                 elif w.zone == 'Up Position':
                     cur_up = w.name
+                    # print "cur up: ",cur_up
                 elif w.zone == 'Color Position' and self.current_player == 'ck':
                     cur_hand = w.name
+                    # print "cur hand: ",cur_hand
                 elif w.zone == 'Number Position' and self.current_player == 'nk':
                     cur_hand = w.name
+                    # print "cur hand",cur_hand
                 elif w.zone == 'DownC Position':
                     cur_c = w.name
+                    # print "cur c ", cur_c
                 elif w.zone == 'DownN Position':
                     cur_n = w.name
+                    # print "cur n: ",cur_n
                 else:
-                    print "Unmatched card zone string!"
+                    print "Unmatched card zone string: ", w.zone
 
         if current_card == None and opponent_card == None:
             move_str = TTTGame.ZONES_MOVES[move] + ' ' + self.stopwatch.to_string(move_time)
@@ -323,28 +337,29 @@ class TTTGame(AnchorLayout):
             h_record['move'] = TTTGame.ZONES_MOVES[current_card.zone]
             # when the move is 't' or 'u', simply swap the card name in hand 
             # position (relative to the color or number keeper) with the respective position (target or up).
-            if h_record['move'] == 't':
+            if h_record['move'] == 'T':
                 h_record['up'] = cur_up
                 h_record['target'] = cur_hand
                 h_record['hand'] = cur_target
 
-            elif h_record['move'] == 'u':
+            elif h_record['move'] == 'U':
                 h_record['up'] = cur_hand
                 h_record['target'] = cur_target
                 h_record['hand'] = cur_up
+                print h_record
 
-            elif h_record['move'] == 'n':
+            elif h_record['move'] == 'N':
                 h_record['up'] = cur_up
                 h_record['target'] = cur_target
                 h_record['hand'] = cur_n
 
-            elif h_record['move'] == 'c':
+            elif h_record['move'] == 'C':
                 h_record['up'] = cur_up
                 h_record['target'] = cur_target
                 h_record['hand'] = cur_c
 
             else:
-                print "Unmached move when extracting history situation."
+                print "Unmatched move when extracting history situation."
 
         self.timeHistory.append(move_str)
 
@@ -582,12 +597,17 @@ class TTTGame(AnchorLayout):
                 elif w.zone == 'Number Position' and self.current_player == 'nk':
                     current_table['hand'] = w.name
                 else:
-                    print "Unmatched card zone string!"
-                    
+                    print "Unmatched card zone string: ", w.zone
+        
+        print "current table: ", current_table
+        print "ck history: ", self.ck_history_q
+        print "nk history: ", self.nk_history_q
+               
         rule = self.rp.match(current_table['hand'], current_table['up'],
                               current_table['target'], self.ck_history_q,
                               self.nk_history_q, self.history_record)
         
+        self.console.text += "rule selected: %s\n" % rule[0]
         self.apply_move(rule[0], current_table['hand'])
         
     
@@ -603,7 +623,7 @@ class TTTGame(AnchorLayout):
             to_card = None
             for w in self.game_table.children:
                 if isinstance(w, CardWidget):
-                    if w.name == 'hand':
+                    if w.name == hand:
                         card = w
                     if (w.zone != 'Color Position' and w.zone != 'Number Position') \
                         and TTTGame.ZONES_MOVES[w.zone] == move:
@@ -615,8 +635,10 @@ class TTTGame(AnchorLayout):
                         self.run += 1
                         self.console.text += 'Hand successful!\n'
                         Clock.schedule_once(lambda dt: self.generate_hand())
-                  
+            
+            card.select()
             self.relocate(card, to_card)
+            card.selected = None
             self.score(card, to_card)
             
         

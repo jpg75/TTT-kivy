@@ -48,6 +48,7 @@ class RuleParser(object):
         else:
             nkk = [[i.get(k) for k in history_record.iterkeys()] for i in nk_knowledge]
 
+        # since they are lists of 2 items they are multiplied for the inner elements:
         nksize = len(nkk) * 4
         cksize = len(ckk) * 3
         print "ckk: %s" % ckk
@@ -59,27 +60,34 @@ class RuleParser(object):
         # makes a single list where alternatively puts ck_knowlodge and
         # nk_knowledge elements 'hand' elements are removed from ck_knowledge
         iters = [iter(ckk), iter(nkk)]
-        knowledge = [hand, up, target] + list(it.next() for it in itertools.cycle(iters))
+        knowledge = [hand, up, target] 
+        l = list(it.next() for it in itertools.cycle(iters))
+        knowledge.extend([item for sublist in l for item in sublist])
         print "Knowledge: %s" % knowledge
-
+        
         for rule in rl:
             score = 0
             comparison = zip(rule[1:], knowledge)
-            # print "COMPARING: %s"%comparison
+            #print "COMPARING: %s"%comparison
             for r, k in comparison:
                 if r == k:
                     score += 1
                 elif r == '#':
                     pass
                 else:
+                    # print "exiting ext for"
+                    score = -1
                     break  # goes to the next rule
 
+            if score != -1:
                 if self.rates.get(score):
                     self.rates[score].append(rule)
                 else:
                     self.rates[score] = []
                     self.rates[score].append(rule)
-
+              
+                print "COMPARING: %s score %d"%(comparison, score)
+        
         highest_score = max(self.rates.keys())
         result = self.rates[highest_score]
         print "Highest score: %d" % highest_score
