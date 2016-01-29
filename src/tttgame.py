@@ -167,13 +167,6 @@ class TTTGame(AnchorLayout):
         self.connection_popup = ConnectionPopup()
         self.connection_popup.open()
         
-        #=======================================================================
-        # for w in self.game_table.children:
-        #     if isinstance(w, CardWidget):
-        #         w.old_x = w.x
-        #         w.old_y = w.y
-        #=======================================================================
-                # Clock.schedule_once(lambda dt: w.select(), 0)
         # self.connection_popup()  
         # self.show_login_popup()
         # self.generate_hand()
@@ -281,7 +274,7 @@ class TTTGame(AnchorLayout):
                 else:
                     w.to_front = True
 
-    def score(self, current_card=None, opponent_card=None, move='Pass'):
+    def score(self, current_card=None, opponent_card=None, move='Pass', no_auto_player_trigger=False):
         """Score a valid move for the current player and updates stats and the 
         current player turn.
         Moves are added to the hand's history of moves and to the short term 
@@ -289,6 +282,7 @@ class TTTGame(AnchorLayout):
         Cards in NumberKeeper and ColorKeeper positions are flip according to the
         current player.
         If the auto player is enabled, its behavior is triggered with a delay.
+        If no_auto_player_trigger then the auto player is not triggered.
         """
         self.moves += 1
         self.total_moves += 1
@@ -368,7 +362,7 @@ class TTTGame(AnchorLayout):
             self.ck_history_q.appendleft(h_record)
             self.current_player = 'nk'
             # when auto player enabled trigger its behavior in [1:3] seconds delay
-            if self.auto_player:
+            if self.auto_player and not no_auto_player_trigger:
                 Clock.schedule_once(lambda dt: self.auto_player_behavior(), random.randint(1, 3))
                 
         else:
@@ -466,12 +460,18 @@ class TTTGame(AnchorLayout):
                         self.run += 1
                         self.console.text += 'Hand successful!\n'
                         Clock.schedule_once(lambda dt: self.generate_hand())
+                        # card.relocate(other_card)
+                        self.relocate(card, other_card)
+                        # self.console.text += 'Relocated True\n'
+                        relocated = True
+                        self.score(card, other_card, no_auto_player_trigger=True)
 
-                    # card.relocate(other_card)
-                    self.relocate(card, other_card)
-                    # self.console.text += 'Relocated True\n'
-                    relocated = True
-                    self.score(card, other_card)
+                    else:
+                        # card.relocate(other_card)
+                        self.relocate(card, other_card)
+                        # self.console.text += 'Relocated True\n'
+                        relocated = True
+                        self.score(card, other_card)
 
             else:
                 self.relocate(card, other_card)
@@ -566,10 +566,14 @@ class TTTGame(AnchorLayout):
 
             # check if the card has changed before the popup
             if run_index >= 1:
+                callback = None
+                if self.auto_player and self.current_player == 'nk':
+                    callback = self.intra_hand_popup_dismiss
+                                    
                 if self.current_target_card != self.hand[6]:
-                    self.intra_hand_popup(goal_changed=True)
+                    self.intra_hand_popup(goal_changed=True, dismiss=callback)
                 else:
-                    self.intra_hand_popup()
+                    self.intra_hand_popup(dismiss=callback)
 
             self.game_card_file = 'data/' + TTTGame.cards_names_files[gc]
             self.current_target_card = gc
@@ -646,19 +650,30 @@ class TTTGame(AnchorLayout):
         l_popup = LoginPopup()
         l_popup.open()
 
-    def intra_hand_popup(self, goal_changed=False):
+    def intra_hand_popup(self, goal_changed=False, dismiss=None):
         """Generate a popup to emphasize the start of a new hand.
         By clicking over the button, it disappears.
+        When 
         """
         popup = Popup(title='Next Hand Window', size_hint=(0.3, 0.3))
+        if dismiss == None:
+            dismiss = popup.dismiss
+        
+        # if self.auto_player:
+            
         l = BoxLayout(orientation='vertical')
         if goal_changed:
             l.add_widget(Label(text='Your Goal card has changed', font_size='30sp'))
 
-        l.add_widget(Button(text='Next hand', font_size='40sp', on_press=popup.dismiss))
+        l.add_widget(Button(text='Next hand', font_size='40sp', on_press=dismiss))
         popup.add_widget(l)
+        # popup.bind(on_dismiss=dismiss)
         popup.open()
-
+    
+    def intra_hand_popup_dismiss(self, widget):
+        Clock.schedule_once(lambda dt: self.auto_player_behavior(), random.randint(1, 3))
+        widget.parent.parent.parent.parent.dismiss()
+        
     def quit_popup(self):
         popup = Popup(title='Score Summary Window', size_hint=(0.7, 0.7))
         l = BoxLayout(orientation='vertical')
