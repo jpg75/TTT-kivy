@@ -460,22 +460,17 @@ class TTTGame(AnchorLayout):
                         self.run += 1
                         self.console.text += 'Hand successful!\n'
                         Clock.schedule_once(lambda dt: self.generate_hand())
-                        # card.relocate(other_card)
                         self.relocate(card, other_card)
-                        # self.console.text += 'Relocated True\n'
                         relocated = True
                         self.score(card, other_card, no_auto_player_trigger=True)
 
                     else:
-                        # card.relocate(other_card)
                         self.relocate(card, other_card)
-                        # self.console.text += 'Relocated True\n'
                         relocated = True
                         self.score(card, other_card)
 
             else:
                 self.relocate(card, other_card)
-                # self.console.text += 'Relocated, but no hand True\n'
                 relocated = True
                 self.score(card, other_card)
 
@@ -603,9 +598,11 @@ class TTTGame(AnchorLayout):
                 else:
                     print "Unmatched card zone string: ", w.zone
         
-        print "current table: ", current_table
-        print "ck history: ", self.ck_history_q
-        print "nk history: ", self.nk_history_q
+        #=======================================================================
+        # print "current table: ", current_table
+        # print "ck history: ", self.ck_history_q
+        # print "nk history: ", self.nk_history_q
+        #=======================================================================
                
         rule = self.rp.match(current_table['hand'], current_table['up'],
                               current_table['target'], self.ck_history_q,
@@ -659,15 +656,12 @@ class TTTGame(AnchorLayout):
         if dismiss == None:
             dismiss = popup.dismiss
         
-        # if self.auto_player:
-            
         l = BoxLayout(orientation='vertical')
         if goal_changed:
             l.add_widget(Label(text='Your Goal card has changed', font_size='30sp'))
 
         l.add_widget(Button(text='Next hand', font_size='40sp', on_press=dismiss))
         popup.add_widget(l)
-        # popup.bind(on_dismiss=dismiss)
         popup.open()
     
     def intra_hand_popup_dismiss(self, widget):
@@ -951,27 +945,7 @@ class CardWidget(Scatter):
                 if w != self and isinstance(w, CardWidget):
                     if self.parent.parent.parent.check_cards_collision(touch, self, w):
                         relocated = True
-                    # if w.collide_point(touch.x, touch.y) and w.zone in TTTGame.allowed_moving_zones:  # collision!
-                    #     if w.zone == 'Target Position':
-                    #         if self.is_goal(w):
-                    #             # check if its is the current target
-                    #             print "NAME: %s - target: %s" % (
-                    #             self.name, self.parent.parent.parent.current_target_card)
-                    #             if self.name == self.parent.ttt.current_target_card:
-                    #                 # ended current run!
-                    #                 self.parent.ttt.run += 1
-                    #                 self.parent.ttt.console.text += 'Hand successful!\n'
-                    #                 Clock.schedule_once(lambda dt: self.parent.parent.parent.generate_hand())
-                    #
-                    #             self.relocate(w)
-                    #             relocated = True
-                    #             self.parent.ttt.score(self, w)
-                    #
-                    #     else:
-                    #         self.relocate(w)
-                    #         relocated = True
-                    #         self.parent.ttt.score(self, w)
-            self.parent.ttt.console.text += "Relocated: %s!\n" % relocated
+                    
             # if it is not a valid move, bring the card to the original position 
             if (not relocated and (self.x != self.old_x or self.y != self.old_y)):
                 anim = Animation(x=self.old_x, y=self.old_y, t='in_quad', d=0.5)

@@ -99,9 +99,6 @@ class TTTGameApp(App):
         
         
 if __name__ == '__main__':
-    #from kivy.core.window import Window
-    #Window.size = (1280, 720)
-    #Window.fullscreen = True
-    Config.set('graphics', 'fullscreen', '0')  # fullscreen mode
+    Config.set('graphics', 'fullscreen', 'auto')  # fullscreen mode
     TTTGameApp().run()
     
