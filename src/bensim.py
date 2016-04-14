@@ -44,7 +44,7 @@ class TTTGameApp(App):
 
     def connect_to_server(self, host, port):
         reactor.connectTCP(host, port, LogClientFactory(self))
-        # reactor.connectTCP(host, port, EchoClientFactory(self))   
+        # reactor.connectTCP(host, port, EchoClientFactory(self))
     
     def on_connection(self, connection):
         self.connection = connection

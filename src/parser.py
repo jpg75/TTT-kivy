@@ -7,6 +7,9 @@ class RuleParser(object):
     Class for reading and parsing rules for the automatic player.
     Rules are in 'data/arules.txt' file by default.
     """
+    
+    # as in old 'REGOLE.TXT' file
+    weights = [100, 100, 100, 15, 15, 15, 15, 5, 5, 5, 3, 3, 3, 1, 1, 1, 1]  
 
     def __init__(self, file_name='data/arules.txt'):
         self.filename = file_name
@@ -68,10 +71,15 @@ class RuleParser(object):
         for rule in rl:
             score = 0
             comparison = zip(rule[1:], knowledge)
-            #print "COMPARING: %s"%comparison
+            index = 0
+            # print "COMPARING: %s"%comparison
             for r, k in comparison:
                 if r == k:
-                    score += 1
+                    try:
+                        score += 1 + RuleParser.weights[index]
+                    except IndexError as ie:
+                        score += 1
+                        
                 elif r == '#':
                     pass
                 else:
@@ -86,7 +94,7 @@ class RuleParser(object):
                     self.rates[score] = []
                     self.rates[score].append(rule)
               
-                print "COMPARING: %s score %d"%(comparison, score)
+                print "COMPARING: %s score %d" % (comparison, score)
         
         highest_score = max(self.rates.keys())
         result = self.rates[highest_score]
